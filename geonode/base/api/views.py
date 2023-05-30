@@ -67,7 +67,13 @@ from geonode.thumbs.thumbnails import create_thumbnail
 from geonode.thumbs.utils import _decode_base64, BASE64_PATTERN
 from geonode.groups.conf import settings as groups_settings
 from geonode.base.models import HierarchicalKeyword, Region, ResourceBase, TopicCategory, ThesaurusKeyword
-from geonode.base.api.filters import DynamicSearchFilter, ExtentFilter, FacetVisibleResourceFilter, FavoriteFilter
+from geonode.base.api.filters import (
+    DynamicSearchFilter,
+    ExtentFilter,
+    FacetVisibleResourceFilter,
+    FavoriteFilter,
+    TKeywordsFilter,
+)
 from geonode.groups.models import GroupProfile, GroupMember
 from geonode.people.utils import get_available_users
 from geonode.security.permissions import get_compact_perms_list, PermSpec, PermSpecCompact
@@ -346,6 +352,7 @@ class ResourceBaseViewSet(DynamicModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication, OAuth2Authentication]
     permission_classes = [IsAuthenticatedOrReadOnly, UserHasPerms]
     filter_backends = [
+        TKeywordsFilter,
         DynamicFilterBackend,
         DynamicSortingFilter,
         DynamicSearchFilter,
@@ -1483,23 +1490,30 @@ class ResourceBaseViewSet(DynamicModelViewSet):
     )
     def linked_resources(self, request, pk):
         try:
+            """
+            To let the API be able to filter the linked result, we cannot rely on the DynamicFilterBackend
+            works on the resource and not on the linked one.
+            So if we want to filter the linked resource by "resource_type"
+            we have to search in the query params like in the following code:
+            _filters = {
+                x: y
+                for x, y
+                in request.query_params.items()
+                if x not in ["page_size", "page"]
+            }
+            We have to exclude the paging code or will raise the:
+            "Cannot resolve keyword into the field..."
+            """
             _obj = self.get_object().get_real_instance()
             if issubclass(_obj.get_real_concrete_instance_class(), GeoApp):
                 raise NotImplementedError("Not implemented: this endpoint is not available for GeoApps")
-
-            linked_resource_mapping = {"dataset": "maps", "map": "datasets", "document": "links"}
-
             # getting the resource dynamically list based on the above mapping
-            resources = getattr(_obj, linked_resource_mapping[_obj.resource_type]).all()
+            resources = _obj.linked_resources
 
-            if _obj.resource_type == "document":
-                # in case of documents, we need to filter again
-                # to get the resourcebase objects
-                resources = ResourceBase.objects.filter(pk__in=resources.values_list("object_id", flat=True))
-
-            additional_query_params = request.query_params
-            if additional_query_params:
-                resources = resources.filter(**{x: y for x, y in request.query_params.items()})
+            if request.query_params:
+                _filters = {x: y for x, y in request.query_params.items() if x not in ["page_size", "page"]}
+                if _filters:
+                    resources = resources.filter(**_filters)
 
             resources = get_visible_resources(
                 resources,
