@@ -1480,12 +1480,29 @@ if GEONODE_CLIENT_LAYER_PREVIEW_LIBRARY == "mapstore":
 
     DEFAULT_MS2_BACKGROUNDS = [
         {
+            "type": "tileprovider",
+            "title": "IoT Link",
+            "name": "iotlink",
+            "provider": "custom",
+            "url": "http://rtile.map4d.vn/all/2d/{z}/{x}/{y}.png",
+            "thumbURL": "http://rtile.map4d.vn/all/2d/3/6/3.png",
+            "group": "background",
+            "visibility": True,
+            "options": {
+                "attribution" : "IoT Link  | &copy; <a href=\"https://map.map4d.vn\">IoT Link Map 4D</a> ",
+                "credits": {
+                    "text": "@ IoT Link Map4d",
+                    "link": 'https://map.map4d.vn'
+                }
+            }
+        },
+        {
             "type": "osm",
             "title": "Open Street Map",
             "name": "mapnik",
             "source": "osm",
             "group": "background",
-            "visibility": True,
+            "visibility": False,
         },
         {
             "type": "tileprovider",
