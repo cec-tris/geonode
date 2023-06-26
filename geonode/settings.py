@@ -438,6 +438,7 @@ GEONODE_INTERNAL_APPS = (
 
 GEONODE_CONTRIB_APPS = (
     # GeoNode Contrib Apps
+    "geonode.icons", # [chumano]
 )
 
 # Uncomment the following line to enable contrib apps
@@ -1106,7 +1107,7 @@ PYCSW = {
             "home": ".",
             "url": CATALOGUE["default"]["URL"],
             "encoding": "UTF-8",
-            "language": LANGUAGE_CODE if LANGUAGE_CODE in ("en", "fr", "el") else "en",
+            "language": LANGUAGE_CODE if LANGUAGE_CODE in ("en", "fr", "el", "vi") else "en",
             "maxrecords": "20",
             "pretty_print": "true",
             # 'domainquerytype': 'range',
@@ -1539,14 +1540,14 @@ if GEONODE_CLIENT_LAYER_PREVIEW_LIBRARY == "mapstore":
     if MAPBOX_ACCESS_TOKEN:
         BASEMAP = {
             "type": "tileprovider",
-            "title": "MapBox streets-v11",
+            "title": "MapBox light-v11",
             "provider": "MapBoxStyle",
-            "name": "MapBox streets-v11",
+            "name": "MapBox light-v11",
             "accessToken": f"{MAPBOX_ACCESS_TOKEN}",
-            "source": "streets-v11",
-            "thumbURL": f"https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/6/33/23?access_token={MAPBOX_ACCESS_TOKEN}",  # noqa
+            "source": "light-v11",
+            "thumbURL": f"https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/256/6/33/23?access_token={MAPBOX_ACCESS_TOKEN}",  # noqa
             "group": "background",
-            "visibility": True,
+            "visibility": False,
         }
         DEFAULT_MS2_BACKGROUNDS = [
             BASEMAP,
@@ -1576,6 +1577,7 @@ if GEONODE_CLIENT_LAYER_PREVIEW_LIBRARY == "mapstore":
         ("es-es", "Español"),
         ("fr-fr", "Français"),
         ("it-it", "Italiano"),
+        ("vi-vn", "Tiếng việt"),
     )
 
     if os.getenv("LANGUAGES"):
@@ -1977,12 +1979,18 @@ SOCIALACCOUNT_ADAPTER = "geonode.people.adapters.SocialAccountAdapter"
 SOCIALACCOUNT_AUTO_SIGNUP = ast.literal_eval(os.environ.get("SOCIALACCOUNT_AUTO_SIGNUP", "True"))
 # This will hide or show local registration form in allauth view. True will show form
 SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP = strtobool(os.environ.get("SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP", "True"))
+SOCIALACCOUNT_LOGIN_ON_GET=False #True : will not ask again then direct to external login page
+                                #False: more security, it use temp page, then  login by post request
 
 # Uncomment this to enable Linkedin and Facebook login
 # INSTALLED_APPS += (
 #    'allauth.socialaccount.providers.linkedin_oauth2',
 #    'allauth.socialaccount.providers.facebook',
 # )
+# [chumano]
+INSTALLED_APPS += (
+    'allauth.socialaccount.providers.openid_connect',
+)
 
 SOCIALACCOUNT_PROVIDERS = {
     "linkedin_oauth2": {
@@ -2019,6 +2027,28 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
     },
 }
+
+# [chumano] trisid
+SOCIALACCOUNT_EXTERNAL_OIDC_ENABLED = ast.literal_eval(os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_ENABLED", "False"))
+if SOCIALACCOUNT_EXTERNAL_OIDC_ENABLED:
+    SOCIALACCOUNT_EXTERNAL_OIDC_NAME = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_NAME", "TRISID")
+    SOCIALACCOUNT_EXTERNAL_OIDC_URL = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_URL", "")
+    SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID", "maphub")
+    SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET", "")
+    SOCIALACCOUNT_PROVIDERS["openid_connect"] = {
+        "SERVERS": [
+            {
+                "id": "trisid",  # 30 characters or less
+                "name": SOCIALACCOUNT_EXTERNAL_OIDC_NAME,
+                "server_url": SOCIALACCOUNT_EXTERNAL_OIDC_URL,
+                
+                "APP": {
+                    "client_id": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID,
+                    "secret": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET,
+                },
+            },
+        ]
+    }
 
 SOCIALACCOUNT_PROFILE_EXTRACTORS = {
     "facebook": "geonode.people.profileextractors.FacebookExtractor",

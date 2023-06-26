@@ -50,7 +50,9 @@ js_info_dict = {"domain": "djangojs", "packages": "geonode"}
 
 sitemaps = {"dataset": DatasetSitemap, "map": MapSitemap}
 
-homepage = register_url_event()(TemplateView.as_view(template_name="index.html"))
+# [chumano]: custom home page
+#homepage = register_url_event()(TemplateView.as_view(template_name="index.html"))
+homepage = register_url_event()(TemplateView.as_view(template_name="home.html"))
 
 urlpatterns = [
     url(r"^$", homepage, name="home"),
@@ -63,6 +65,7 @@ urlpatterns = [
     url(r"^robots\.txt$", TemplateView.as_view(template_name="robots.txt"), name="robots"),
     url(r"(.*version\.txt)$", version.version, name="version"),
     url(r"^messages/", include(msg_urls)),
+    url(r"^icons/", include('geonode.icons.urls')), # [chumano]
 ]
 
 urlpatterns += [
