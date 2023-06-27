@@ -75,10 +75,13 @@ def update_user_email_addresses(sender, **kwargs):
     sociallogin = kwargs["sociallogin"]
     user = sociallogin.user
     extractor = get_data_extractor(sociallogin.account.provider)
-    try:
-        sociallogin_email = extractor.extract_email(sociallogin.account.extra_data)
-    except NotImplementedError:
-        sociallogin_email = None
+    sociallogin_email = None
+    if extractor is not None:
+        try:
+            sociallogin_email = extractor.extract_email(sociallogin.account.extra_data)
+        except NotImplementedError:
+            sociallogin_email = None
+    
     if sociallogin_email is not None:
         try:
             EmailAddress.objects.add_email(request=None, user=user, email=sociallogin_email, confirm=False)
