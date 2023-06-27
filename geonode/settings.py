@@ -1672,7 +1672,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "height": 200,
     "plugins": "preview paste searchreplace autolink directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars",  # noqa
     "imagetools_cors_hosts": ["picsum.photos"],
-    "menubar": False,
+    "menubar": True,
     "statusbar": False,
     "toolbar": "bold italic underline | formatselect removeformat | outdent indent |  numlist bullist | insertfile image media link codesample | preview",  # noqa
     "toolbar_sticky": "true",
