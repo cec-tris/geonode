@@ -1094,6 +1094,7 @@ CATALOGUE = {
 }
 
 # pycsw settings
+# OGC Catalogue Service for the Web
 PYCSW = {
     # pycsw configuration
     "CONFIGURATION": {
@@ -1121,11 +1122,11 @@ PYCSW = {
             # 'csw_harvest_pagesize': '10',
         },
         "metadata:main": {
-            "identification_title": "GeoNode Catalogue",
-            "identification_abstract": "GeoNode is an open source platform"
+            "identification_title": "MapHub Catalogue",
+            "identification_abstract": "MapHub is an open source platform"
             " that facilitates the creation, sharing, and collaborative use"
             " of geospatial data",
-            "identification_keywords": "sdi, catalogue, discovery, metadata," " GeoNode",
+            "identification_keywords": "sdi, catalogue, discovery, metadata," " MapHub",
             "identification_keywords_type": "theme",
             "identification_fees": "None",
             "identification_accessconstraints": "None",
