@@ -162,7 +162,7 @@
       {% endif %}
     </ul>
     <ul class="list-group">
-      {% if not READ_ONLY_MODE %}
+      {% if INVITATIONS_ENABLED and not READ_ONLY_MODE %}
         <li class="list-group-item"><a href="{% url "geonode.invitations:geonode-send-invite" %}"><i class="fa fa-edit"></i> {% trans "Invite Users" %}</a></li>
       {% endif %}
       {% if user.is_superuser or user.is_staff %}

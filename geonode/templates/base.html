@@ -234,7 +234,7 @@
                 {% if perms.announcements.can_manage %}
                   <li><a href="{% url "announcements_list" %}">{% trans "Announcements" %}</a></li>
                 {% endif %}
-                {% if user.is_authenticated and not READ_ONLY_MODE %}
+                {% if user.is_authenticated and INVITATIONS_ENABLED and not READ_ONLY_MODE %}
                   <li role="separator" class="divider"></li>
                   <li><a href="{% url "geonode.invitations:geonode-send-invite" %}">{% trans "Invite Users" %}</a></li>
                 {% endif %}
@@ -369,7 +369,7 @@
             {% if perms.announcements.can_manage %}
             <li><a href="{% url "announcements_list" %}">{% trans "Announcements" %}</a></li>
             {% endif %}
-            {% if user.is_authenticated and not READ_ONLY_MODE %}
+            {% if user.is_authenticated and INVITATIONS_ENABLED and not READ_ONLY_MODE %}
             <li><a href="{% url "geonode.invitations:geonode-send-invite" %}">{% trans "Invite Users" %}</a></li>
             {% endif %}
             {% if user.is_superuser and not READ_ONLY_MODE %}

@@ -2057,7 +2057,7 @@ SOCIALACCOUNT_PROFILE_EXTRACTORS = {
 
 INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
 INVITATIONS_CONFIRMATION_URL_NAME = "geonode.invitations:accept-invite"
-
+INVITATIONS_ENABLED = ast.literal_eval(os.getenv("INVITATIONS_ENABLED", "False"))
 # Choose thumbnail generator -- this is the default generator
 THUMBNAIL_GENERATOR = os.environ.get("THUMBNAIL_GENERATOR", "geonode.thumbs.thumbnails.create_gs_thumbnail_geonode")
 

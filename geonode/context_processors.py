@@ -100,6 +100,7 @@ def resource_urls(request):
         OGC_SERVER=getattr(settings, "OGC_SERVER", None),
         DELAYED_SECURITY_SIGNALS=getattr(settings, "DELAYED_SECURITY_SIGNALS", False),
         READ_ONLY_MODE=getattr(Configuration.load(), "read_only", False),
+        INVITATIONS_ENABLED=getattr(settings, "INVITATIONS_ENABLED", False),
         # GeoNode Apps
         GEONODE_APPS_ENABLE=getattr(settings, "GEONODE_APPS_ENABLE", False),
         GEONODE_APPS_NAME=getattr(settings, "GEONODE_APPS_NAME", "Apps"),
