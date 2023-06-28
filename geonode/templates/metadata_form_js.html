@@ -786,7 +786,10 @@
                     }).always(function (a, textStatus, b) {
                           $('#preview_pleaseWaitDialog').modal('hide');
                           if(textStatus === 'success' && metadata_update_done && !metadata_preview) {
-                              if(new RegExp(".*/metadata$").test(e.target.action)) {
+                              //[chumano] : prevent redirect to dataset page
+                              window.location.reload();
+                              return;
+                              if(false && new RegExp(".*/metadata$").test(e.target.action)) {
                                   $.ajax({
                                     type: "POST",
                                     url: "{% url 'metadata_update_redirect' %}",

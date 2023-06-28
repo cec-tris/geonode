@@ -68,10 +68,10 @@
             </HEAD>
 
             <BODY ONCONTEXTMENU="return true">
-                <!-- LOGOS -->
-                <DIV class="logos">
+                <!-- LOGOS [chumano] ignore metadata.xsl logo-->
+                <!-- <DIV class="logos">
                     <img src="/static/geonode/img/logo-bg.png" class="fright geonodelogo"  />
-                </DIV>
+                </DIV> -->
 
 
                 <xsl:if test="$title | $abstract ">
