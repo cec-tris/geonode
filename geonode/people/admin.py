@@ -36,6 +36,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.core.exceptions import PermissionDenied
 from django.forms import modelform_factory
 from geonode.base.admin import set_user_and_group_dataset_permission
+from django.db.models import Q
 
 from .models import Profile
 from .forms import ProfileCreationForm, ProfileChangeForm
@@ -91,7 +92,25 @@ class ProfileAdmin(admin.ModelAdmin):
     def get_fieldsets(self, request, obj=None):
         if not obj:
             return self.add_fieldsets
-        return super().get_fieldsets(request, obj)
+        # [chumano] hide field: is_superuser
+        # return super().get_fieldsets(request, obj)
+        if self.fieldsets:
+            if request.user.is_superuser:
+                self.fieldsets[2][1]['fields']= ("is_active", "is_staff", "is_superuser", "groups")
+            else:
+                self.fieldsets[2][1]['fields']= ("is_active", "is_staff", "groups")
+            return self.fieldsets
+        return [(None, {'fields': self.get_fields(request, obj)})]
+    
+    # [chumano]
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        
+        # exclude anonymous, admin
+        #return qs.filter(~Q(id__in=[-1,1000]))
+        return qs.exclude(id__in=[-1,1000])
 
     def get_form(self, request, obj=None, **kwargs):
         """
