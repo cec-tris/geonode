@@ -65,7 +65,6 @@ urlpatterns = [
     url(r"^robots\.txt$", TemplateView.as_view(template_name="robots.txt"), name="robots"),
     url(r"(.*version\.txt)$", version.version, name="version"),
     url(r"^messages/", include(msg_urls)),
-    url(r"^icons/", include('geonode.icons.urls')), # [chumano]
 ]
 
 urlpatterns += [

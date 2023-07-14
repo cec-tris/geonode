@@ -1,0 +1,1 @@
+default_app_config = "geonode.datahub.apps.DataHubConfig"

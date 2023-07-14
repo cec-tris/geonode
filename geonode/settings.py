@@ -439,6 +439,7 @@ GEONODE_INTERNAL_APPS = (
 GEONODE_CONTRIB_APPS = (
     # GeoNode Contrib Apps
     "geonode.icons", # [chumano]
+    "geonode.datahub", # [chumano]
 )
 
 # Uncomment the following line to enable contrib apps
@@ -2373,3 +2374,5 @@ FACET_PROVIDERS = (
     "geonode.facets.providers.thesaurus.ThesaurusFacetProvider",
     "geonode.facets.providers.region.RegionFacetProvider",
 )
+
+DATAHUB_URL = os.getenv("DATAHUB_URL", None)
