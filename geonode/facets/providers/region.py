@@ -21,6 +21,7 @@ import logging
 
 from django.db.models import Count
 
+from geonode.base.models import Region
 from geonode.facets.models import FacetProvider, DEFAULT_FACET_PAGE_SIZE, FACET_TYPE_PLACE
 
 logger = logging.getLogger(__name__)
@@ -35,14 +36,13 @@ class RegionFacetProvider(FacetProvider):
     def name(self) -> str:
         return "region"
 
-    def get_info(self, lang="en") -> dict:
+    def get_info(self, lang="en", **kwargs) -> dict:
         return {
             "name": self.name,
-            "key": "filter{regions.code.in}",
+            "key": "filter{regions.code.in}",  # deprecated
+            "filter": "filter{regions.code.in}",
             "label": "Region",
             "type": FACET_TYPE_PLACE,
-            "hierarchical": False,  # source data is hierarchical, but this implementation is flat
-            "order": 2,
         }
 
     def get_facet_items(
@@ -77,6 +77,20 @@ class RegionFacetProvider(FacetProvider):
 
         return cnt, topics
 
+    def get_topics(self, keys: list, lang="en", **kwargs) -> list:
+        q = Region.objects.filter(code__in=keys).values("code", "name")
+
+        logger.debug(" ---> %s\n\n", q.query)
+        logger.debug(" ---> %r\n\n", q.all())
+
+        return [
+            {
+                "key": r["code"],
+                "label": r["name"],
+            }
+            for r in q.all()
+        ]
+
     @classmethod
     def register(cls, registry, **kwargs) -> None:
-        registry.register_facet_provider(RegionFacetProvider())
+        registry.register_facet_provider(RegionFacetProvider(**kwargs))

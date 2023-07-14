@@ -16,12 +16,15 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #########################################################################
+from django.conf import settings
 
-from django.urls import path
-from . import views
+from geonode.utils import import_class_module
 
-urlpatterns = [
-    path("facets", views.list_facets, name="list_facets"),
-    path("facets/<facet>", views.get_facet, name="get_facet"),
-    path("facets/<facet>/topics", views.get_facet_topics, name="get_facet_topics"),
-]
+from allauth.socialaccount.providers.oauth2.views import (
+    OAuth2CallbackView,
+    OAuth2LoginView,
+)
+
+
+oauth2_login = OAuth2LoginView.adapter_view(import_class_module(settings.SOCIALACCOUNT_ADAPTER))
+oauth2_callback = OAuth2CallbackView.adapter_view(import_class_module(settings.SOCIALACCOUNT_ADAPTER))

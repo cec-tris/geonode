@@ -16,12 +16,3 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #########################################################################
-
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path("facets", views.list_facets, name="list_facets"),
-    path("facets/<facet>", views.get_facet, name="get_facet"),
-    path("facets/<facet>/topics", views.get_facet_topics, name="get_facet_topics"),
-]

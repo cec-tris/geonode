@@ -19,30 +19,30 @@
 
 import logging
 
-from django.contrib.auth import get_user_model
 from django.db.models import Count
 
-from geonode.facets.models import FacetProvider, DEFAULT_FACET_PAGE_SIZE, FACET_TYPE_USER
+from geonode.base.models import HierarchicalKeyword
+from geonode.facets.models import FacetProvider, DEFAULT_FACET_PAGE_SIZE, FACET_TYPE_KEYWORD
 
 logger = logging.getLogger(__name__)
 
 
-class OwnerFacetProvider(FacetProvider):
+class KeywordFacetProvider(FacetProvider):
     """
-    Implements faceting for users owner of the resources
+    Implements faceting for resource's keywords
     """
 
     @property
     def name(self) -> str:
-        return "owner"
+        return "keyword"
 
     def get_info(self, lang="en", **kwargs) -> dict:
         return {
-            "name": "owner",
-            "key": "filter{owner.pk.in}",  # deprecated
-            "filter": "filter{owner.pk.in}",
-            "label": "Owner",
-            "type": FACET_TYPE_USER,
+            "name": self.name,
+            "key": "filter{keywords.slug.in}",  # deprecated
+            "filter": "filter{keywords.slug.in}",
+            "label": "Keyword",
+            "type": FACET_TYPE_KEYWORD,
         }
 
     def get_facet_items(
@@ -53,12 +53,18 @@ class OwnerFacetProvider(FacetProvider):
         lang="en",
         topic_contains: str = None,
     ) -> (int, list):
-        logger.debug("Retrieving facets for OWNER")
+        logger.debug("Retrieving facets for %s", self.name)
 
-        q = queryset.values("owner", "owner__username")
+        filters = {"keywords__isnull": False}
         if topic_contains:
-            q = q.filter(owner__username__icontains=topic_contains)
-        q = q.annotate(count=Count("owner")).order_by("-count")
+            filters["keywords__name__icontains"] = topic_contains
+
+        q = (
+            queryset.filter(**filters)
+            .values("keywords__slug", "keywords__name")
+            .annotate(count=Count("keywords__slug"))
+            .order_by("-count")
+        )
 
         cnt = q.count()
 
@@ -68,29 +74,29 @@ class OwnerFacetProvider(FacetProvider):
 
         topics = [
             {
-                "key": r["owner"],
-                "label": r["owner__username"],
+                "key": r["keywords__slug"],
+                "label": r["keywords__name"],
                 "count": r["count"],
             }
-            for r in q[start:end]
+            for r in q[start:end].all()
         ]
 
         return cnt, topics
 
     def get_topics(self, keys: list, lang="en", **kwargs) -> list:
-        q = get_user_model().objects.filter(id__in=keys).values("id", "username")
+        q = HierarchicalKeyword.objects.filter(slug__in=keys).values("slug", "name")
 
         logger.debug(" ---> %s\n\n", q.query)
         logger.debug(" ---> %r\n\n", q.all())
 
         return [
             {
-                "key": r["id"],
-                "label": r["username"],
+                "key": r["slug"],
+                "label": r["name"],
             }
             for r in q.all()
         ]
 
     @classmethod
     def register(cls, registry, **kwargs) -> None:
-        registry.register_facet_provider(OwnerFacetProvider(**kwargs))
+        registry.register_facet_provider(KeywordFacetProvider(**kwargs))
