@@ -1979,21 +1979,11 @@ ACCOUNT_MAX_EMAIL_ADDRESSES = int(os.getenv("ACCOUNT_MAX_EMAIL_ADDRESSES", "2"))
 SOCIALACCOUNT_AUTO_SIGNUP = ast.literal_eval(os.environ.get("SOCIALACCOUNT_AUTO_SIGNUP", "True"))
 SOCIALACCOUNT_LOGIN_ON_GET = ast.literal_eval(os.environ.get("SOCIALACCOUNT_LOGIN_ON_GET", "True"))
 # This will hide or show local registration form in allauth view. True will show form
-SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP = strtobool(os.environ.get("SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP", "True"))
+SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP = ast.literal_eval(os.environ.get("SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP", "True"))
 SOCIALACCOUNT_LOGIN_ON_GET=False #True : will not ask again then direct to external login page
                                 #False: more security, it use temp page, then  login by post request
 
-# [chumano]
-INSTALLED_APPS += (
-    'allauth.socialaccount.providers.openid_connect',
-)
-
-SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP = ast.literal_eval(
-    os.environ.get("SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP", "True")
-)
-
 # GeoNode Default Generic OIDC Provider
-
 SOCIALACCOUNT_OIDC_PROVIDER = os.environ.get("SOCIALACCOUNT_OIDC_PROVIDER", "geonode_openid_connect")
 SOCIALACCOUNT_OIDC_PROVIDER_ENABLED = ast.literal_eval(os.environ.get("SOCIALACCOUNT_OIDC_PROVIDER_ENABLED", "False"))
 SOCIALACCOUNT_ADAPTER = os.environ.get("SOCIALACCOUNT_ADAPTER", "geonode.people.adapters.GenericOpenIDConnectAdapter")
@@ -2042,7 +2032,57 @@ _GOOGLE_SOCIALACCOUNT_PROVIDER = {
 
 SOCIALACCOUNT_PROVIDERS_DEFS = {"azure": _AZURE_SOCIALACCOUNT_PROVIDER, "google": _GOOGLE_SOCIALACCOUNT_PROVIDER}
 
-_SOCIALACCOUNT_PROVIDER = os.environ.get("SOCIALACCOUNT_PROVIDER", "google")
+#_SOCIALACCOUNT_PROVIDER = os.environ.get("SOCIALACCOUNT_PROVIDER", "google")
+_SOCIALACCOUNT_PROVIDER = os.environ.get("SOCIALACCOUNT_PROVIDER", "trisid")
+
+# [chumano] trisid
+if SOCIALACCOUNT_OIDC_PROVIDER_ENABLED and (_SOCIALACCOUNT_PROVIDER=='trisid'):
+    # INSTALLED_APPS += (
+    #     'allauth.socialaccount.providers.openid_connect',
+    # )
+
+    SOCIALACCOUNT_EXTERNAL_OIDC_NAME = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_NAME", "TRISID")
+    SOCIALACCOUNT_EXTERNAL_OIDC_URL = "https://id2.tris.vn"# os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_URL", "")
+    SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID", "maphub")
+    SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET", "")
+    # SOCIALACCOUNT_PROVIDERS["openid_connect"] = {
+    #     "SERVERS": [
+    #         {
+    #             "id": "trisid",  # 30 characters or less
+    #             "name": SOCIALACCOUNT_EXTERNAL_OIDC_NAME,
+    #             "server_url": SOCIALACCOUNT_EXTERNAL_OIDC_URL,
+                
+    #             "APP": {
+    #                 "client_id": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID,
+    #                 "secret": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET,
+    #             },
+    #         },
+    #     ]
+    # }
+    # View /.well-known/openid-configuration to get urls
+    _TRISID_SOCIALACCOUNT_PROVIDER = {
+        "NAME":SOCIALACCOUNT_EXTERNAL_OIDC_NAME,
+        "SCOPE": [
+            "profile",
+            "email",
+            "openid"
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+            "prompt": "select_account consent",
+        },
+        "COMMON_FIELDS": {"email": "email", "last_name": "family_name", "first_name": "given_name"},
+        "IS_MANAGER_FIELD": "is_manager",
+        "ACCOUNT_CLASS": "geonode.people.socialaccount.providers.geonode_openid_connect.provider.GenericOpenIDConnectProviderAccount",
+        "ACCESS_TOKEN_URL": SOCIALACCOUNT_EXTERNAL_OIDC_URL+"/connect/token",
+        "AUTHORIZE_URL": SOCIALACCOUNT_EXTERNAL_OIDC_URL+"/connect/authorize",
+        "ID_TOKEN_ISSUER": SOCIALACCOUNT_EXTERNAL_OIDC_URL,
+        "OAUTH_PKCE_ENABLED": True,
+    }
+
+    SOCIALACCOUNT_PROVIDERS_DEFS['trisid'] = _TRISID_SOCIALACCOUNT_PROVIDER
+
+
 SOCIALACCOUNT_PROVIDERS = {
     SOCIALACCOUNT_OIDC_PROVIDER: SOCIALACCOUNT_PROVIDERS_DEFS.get(_SOCIALACCOUNT_PROVIDER),
 }
@@ -2055,28 +2095,6 @@ SOCIALACCOUNT_PROFILE_EXTRACTORS = {
     SOCIALACCOUNT_OIDC_PROVIDER: _SOCIALACCOUNT_PROFILE_EXTRACTOR,
 }
 
-# [chumano] trisid
-SOCIALACCOUNT_EXTERNAL_OIDC_ENABLED = ast.literal_eval(os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_ENABLED", "False"))
-if SOCIALACCOUNT_EXTERNAL_OIDC_ENABLED:
-    SOCIALACCOUNT_EXTERNAL_OIDC_NAME = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_NAME", "TRISID")
-    SOCIALACCOUNT_EXTERNAL_OIDC_URL = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_URL", "")
-    SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID", "maphub")
-    SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET", "")
-    SOCIALACCOUNT_PROVIDERS["openid_connect"] = {
-        "SERVERS": [
-            {
-                "id": "trisid",  # 30 characters or less
-                "name": SOCIALACCOUNT_EXTERNAL_OIDC_NAME,
-                "server_url": SOCIALACCOUNT_EXTERNAL_OIDC_URL,
-                
-                "APP": {
-                    "client_id": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID,
-                    "secret": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET,
-                },
-            },
-        ]
-    }
-    
 
 INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
 INVITATIONS_CONFIRMATION_URL_NAME = "geonode.invitations:accept-invite"
@@ -2390,13 +2408,6 @@ DATAHUB_URL = os.getenv("DATAHUB_URL", None)
 
 INSTALLED_APPS += ("geonode.facets",)
 GEONODE_APPS += ("geonode.facets",)
-
-FACET_PROVIDERS = (
-    "geonode.facets.providers.category.CategoryFacetProvider",
-    "geonode.facets.providers.users.OwnerFacetProvider",
-    "geonode.facets.providers.thesaurus.ThesaurusFacetProvider",
-    "geonode.facets.providers.region.RegionFacetProvider",
-)
 
 FACET_PROVIDERS = [
     {"class": "geonode.facets.providers.baseinfo.ResourceTypeFacetProvider"},
