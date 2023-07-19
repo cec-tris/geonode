@@ -2032,8 +2032,7 @@ _GOOGLE_SOCIALACCOUNT_PROVIDER = {
 
 SOCIALACCOUNT_PROVIDERS_DEFS = {"azure": _AZURE_SOCIALACCOUNT_PROVIDER, "google": _GOOGLE_SOCIALACCOUNT_PROVIDER}
 
-#_SOCIALACCOUNT_PROVIDER = os.environ.get("SOCIALACCOUNT_PROVIDER", "google")
-_SOCIALACCOUNT_PROVIDER = os.environ.get("SOCIALACCOUNT_PROVIDER", "trisid")
+_SOCIALACCOUNT_PROVIDER = os.environ.get("SOCIALACCOUNT_PROVIDER", "google")
 
 # [chumano] trisid
 if SOCIALACCOUNT_OIDC_PROVIDER_ENABLED and (_SOCIALACCOUNT_PROVIDER=='trisid'):
@@ -2110,20 +2109,21 @@ THUMBNAIL_SIZE = {
 THUMBNAIL_BACKGROUND = {
     # class generating thumbnail's background
     # 'class': 'geonode.thumbs.background.WikiMediaTileBackground',
-    "class": "geonode.thumbs.background.OSMTileBackground",
-    # 'class': 'geonode.thumbs.background.GenericXYZBackground',
-    # initialization parameters for generator instance, valid only for generic classes
-    "options": {
-        # 'url': URL for the generic xyz / tms service
-        # 'tms': False by default. Set to True if the service is TMS
-        # 'tile_size': tile size for the generic xyz service, default is 256
-    },
-    # example options for a TMS service
-    # 'class': 'geonode.thumbs.background.GenericXYZBackground',
-    # 'options': {
-    #    'url': 'http://maps.geosolutionsgroup.com/geoserver/gwc/service/tms/1.0.0/osm%3Aosm_simple_light@EPSG%3A900913@png/{z}/{x}/{y}.png',
-    #    'tms': True
+    # "class": "geonode.thumbs.background.OSMTileBackground",
+    # # initialization parameters for generator instance, valid only for generic classes
+    # "options": {
+    #     # 'url': URL for the generic xyz / tms service
+    #     # 'tms': False by default. Set to True if the service is TMS
+    #     # 'tile_size': tile size for the generic xyz service, default is 256
     # },
+    
+    # example options for a TMS service
+    'class': 'geonode.thumbs.background.GenericXYZBackground',
+    'options': {
+       'url': 'http://rtile.map4d.vn/all/2d/{z}/{x}/{y}.png',
+       'tms': False,
+       'tile_size': 256
+    },
 }
 
 # define the urls after the settings are overridden
