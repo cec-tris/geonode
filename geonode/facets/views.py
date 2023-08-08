@@ -53,6 +53,7 @@ def list_facets(request, **kwargs):
     include_config = _resolve_boolean(request, PARAM_INCLUDE_CONFIG, False)
 
     facets = []
+    prefiltered = None
 
     for provider in facet_registry.get_providers():
         logger.debug("Fetching data from provider %r", provider)
@@ -68,7 +69,8 @@ def list_facets(request, **kwargs):
             info["link"] = f"{reverse('get_facet', args=[info['name']])}?{urlencode(link_args)}"
 
         if include_topics:
-            info["topics"] = _get_topics(provider, queryset=_prefilter_topics(request), lang=lang)
+            prefiltered = prefiltered or _prefilter_topics(request)
+            info["topics"] = _get_topics(provider, queryset=prefiltered, lang=lang)
 
         facets.append(info)
 
@@ -92,6 +94,8 @@ def get_facet(request, facet):
     include_config = _resolve_boolean(request, PARAM_INCLUDE_CONFIG, False)
 
     topic_contains = request.GET.get(PARAM_TOPIC_CONTAINS, None)
+    keys = set(request.query_params.getlist("key"))
+
     page = int(request.GET.get(PARAM_PAGE, 0))
     page_size = int(request.GET.get(PARAM_PAGE_SIZE, DEFAULT_FACET_PAGE_SIZE))
 
@@ -101,7 +105,7 @@ def get_facet(request, facet):
 
     qs = _prefilter_topics(request)
     topics = _get_topics(
-        provider, queryset=qs, page=page, page_size=page_size, lang=lang, topic_contains=topic_contains
+        provider, queryset=qs, page=page, page_size=page_size, lang=lang, topic_contains=topic_contains, keys=keys
     )
 
     if add_link:
@@ -154,11 +158,23 @@ def _get_topics(
     page_size: int = DEFAULT_FACET_PAGE_SIZE,
     lang: str = "en",
     topic_contains: str = None,
+    keys: set = {},
+    **kwargs,
 ):
     start = page * page_size
     end = start + page_size
 
-    cnt, items = provider.get_facet_items(queryset, start=start, end=end, lang=lang, topic_contains=topic_contains)
+    cnt, items = provider.get_facet_items(
+        queryset, start=start, end=end, lang=lang, topic_contains=topic_contains, keys=keys
+    )
+
+    if keys:
+        keys.difference_update({str(t["key"]) for t in items})
+        if keys:
+            ext = provider.get_topics(keys, lang)
+            items.extend(ext)
+            cnt += len(ext)
+            logger.debug("Extending facets to %d for %s", cnt, provider.name)
 
     return {"page": page, "page_size": page_size, "start": start, "total": cnt, "items": items}
 
@@ -173,6 +189,7 @@ def _prefilter_topics(request):
     """
     logger.debug("Filtering by user '%s'", request.user)
     filters = {k: vlist for k, vlist in request.query_params.lists() if k.startswith("filter{")}
+    logger.warning(f"FILTERING BY {filters}")
 
     if filters:
         viewset = ResourceBaseViewSet(request=request, format_kwarg={}, kwargs=filters)
