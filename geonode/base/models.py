@@ -1840,6 +1840,7 @@ class Configuration(SingletonModel):
 
     read_only = models.BooleanField(default=False)
     maintenance = models.BooleanField(default=False)
+    default_home_page = models.TextField(default=None, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Configuration"

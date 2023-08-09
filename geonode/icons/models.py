@@ -3,7 +3,7 @@ from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.utils.html import mark_safe
 import os, base64, datetime, time
-
+from functools import wraps
 def unique_filename(path):
     """
     Enforce unique upload file names.
@@ -11,6 +11,7 @@ def unique_filename(path):
     class MyModel(models.Model):
         file = ImageField(upload_to=unique_filename("path/to/upload/dir"))
     """
+    @wraps(unique_filename)
     def funcq(instance, filename):
         image_path = time.strftime(path)
         name, ext = os.path.splitext(filename)
