@@ -26,7 +26,6 @@ import subprocess
 import dj_database_url
 from schema import Optional
 from datetime import timedelta
-from distutils.util import strtobool  # noqa
 from urllib.parse import urlparse, urljoin
 
 #
@@ -655,6 +654,7 @@ except ValueError:
             "glb",
             "pcd",
             "gltf",
+            "ifc"
         ]
         if os.getenv("ALLOWED_DOCUMENT_TYPES") is None
         else re.split(r" *[,|:;] *", os.getenv("ALLOWED_DOCUMENT_TYPES"))
@@ -924,8 +924,8 @@ GUARDIAN_GET_INIT_ANONYMOUS_USER = os.getenv(
 
 # Whether the uplaoded resources should be public and downloadable by default
 # or not
-DEFAULT_ANONYMOUS_VIEW_PERMISSION = ast.literal_eval(os.getenv("DEFAULT_ANONYMOUS_VIEW_PERMISSION", "True"))
-DEFAULT_ANONYMOUS_DOWNLOAD_PERMISSION = ast.literal_eval(os.getenv("DEFAULT_ANONYMOUS_DOWNLOAD_PERMISSION", "True"))
+DEFAULT_ANONYMOUS_VIEW_PERMISSION = ast.literal_eval(os.getenv("DEFAULT_ANONYMOUS_VIEW_PERMISSION", "False"))
+DEFAULT_ANONYMOUS_DOWNLOAD_PERMISSION = ast.literal_eval(os.getenv("DEFAULT_ANONYMOUS_DOWNLOAD_PERMISSION", "False"))
 
 #
 # Settings for default search size
@@ -1517,6 +1517,16 @@ if GEONODE_CLIENT_LAYER_PREVIEW_LIBRARY == "mapstore":
             "visibility": False,
         },
         {
+            "type": "tileprovider",
+            "title": "Google Maps",
+            "name": "Google",
+            "provider": "custom",
+            "url": "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+            "thumbURL": "https://mt1.google.com/vt/lyrs=y&x=25&y=14&z=5",
+            "group": "background",
+            "visibility": False,
+        },
+        {
             "type": "wms",
             "title": "Sentinel-2 cloudless - https://s2maps.eu",
             "format": "image/jpeg",
@@ -1977,85 +1987,124 @@ ACCOUNT_SIGNUP_REDIRECT_URL = os.environ.get("ACCOUNT_SIGNUP_REDIRECT_URL", os.g
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = int(os.getenv("ACCOUNT_LOGIN_ATTEMPTS_LIMIT", "3"))
 ACCOUNT_MAX_EMAIL_ADDRESSES = int(os.getenv("ACCOUNT_MAX_EMAIL_ADDRESSES", "2"))
 
-SOCIALACCOUNT_ADAPTER = "geonode.people.adapters.SocialAccountAdapter"
 SOCIALACCOUNT_AUTO_SIGNUP = ast.literal_eval(os.environ.get("SOCIALACCOUNT_AUTO_SIGNUP", "True"))
+SOCIALACCOUNT_LOGIN_ON_GET = ast.literal_eval(os.environ.get("SOCIALACCOUNT_LOGIN_ON_GET", "True"))
 # This will hide or show local registration form in allauth view. True will show form
-SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP = strtobool(os.environ.get("SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP", "True"))
+SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP = ast.literal_eval(os.environ.get("SOCIALACCOUNT_WITH_GEONODE_LOCAL_SINGUP", "True"))
 SOCIALACCOUNT_LOGIN_ON_GET=False #True : will not ask again then direct to external login page
                                 #False: more security, it use temp page, then  login by post request
 
-# Uncomment this to enable Linkedin and Facebook login
-# INSTALLED_APPS += (
-#    'allauth.socialaccount.providers.linkedin_oauth2',
-#    'allauth.socialaccount.providers.facebook',
-# )
-# [chumano]
-INSTALLED_APPS += (
-    'allauth.socialaccount.providers.openid_connect',
-)
+# GeoNode Default Generic OIDC Provider
+SOCIALACCOUNT_OIDC_PROVIDER = os.environ.get("SOCIALACCOUNT_OIDC_PROVIDER", "geonode_openid_connect")
+SOCIALACCOUNT_OIDC_PROVIDER_ENABLED = ast.literal_eval(os.environ.get("SOCIALACCOUNT_OIDC_PROVIDER_ENABLED", "False"))
+SOCIALACCOUNT_ADAPTER = os.environ.get("SOCIALACCOUNT_ADAPTER", "geonode.people.adapters.GenericOpenIDConnectAdapter")
 
-SOCIALACCOUNT_PROVIDERS = {
-    "linkedin_oauth2": {
-        "SCOPE": [
-            "r_emailaddress",
-            "r_liteprofile",
-        ],
-        "PROFILE_FIELDS": [
-            "id",
-            "email-address",
-            "first-name",
-            "last-name",
-            "picture-url",
-            "public-profile-url",
-        ],
+# Enable this in order to enable the OIDC SocialAccount Provider
+if SOCIALACCOUNT_OIDC_PROVIDER_ENABLED:
+    INSTALLED_APPS += ("geonode.people.socialaccount.providers.geonode_openid_connect",)
+
+_AZURE_TENANT_ID = os.getenv("MICROSOFT_TENANT_ID", "")
+_AZURE_SOCIALACCOUNT_PROVIDER = {
+    "NAME": "Microsoft Azure",
+    "SCOPE": [
+        "User.Read",
+        "openid",
+    ],
+    "AUTH_PARAMS": {
+        "access_type": "online",
+        "prompt": "select_account",
     },
-    "facebook": {
-        "METHOD": "oauth2",
-        "SCOPE": [
-            "email",
-            "public_profile",
-        ],
-        "FIELDS": [
-            "id",
-            "email",
-            "name",
-            "first_name",
-            "last_name",
-            "verified",
-            "locale",
-            "timezone",
-            "link",
-            "gender",
-        ],
-    },
+    "COMMON_FIELDS": {"email": "mail", "last_name": "surname", "first_name": "givenName"},
+    "IS_MANAGER_FIELD": "is_manager",
+    "ACCOUNT_CLASS": "allauth.socialaccount.providers.azure.provider.AzureAccount",
+    "ACCESS_TOKEN_URL": f"https://login.microsoftonline.com/{_AZURE_TENANT_ID}/oauth2/v2.0/token",
+    "AUTHORIZE_URL": f"https://login.microsoftonline.com/{_AZURE_TENANT_ID}/oauth2/v2.0/authorize",
+    "PROFILE_URL": "https://graph.microsoft.com/v1.0/me",
 }
+
+_GOOGLE_SOCIALACCOUNT_PROVIDER = {
+    "NAME": "Google",
+    "SCOPE": [
+        "profile",
+        "email",
+    ],
+    "AUTH_PARAMS": {
+        "access_type": "online",
+        "prompt": "select_account consent",
+    },
+    "COMMON_FIELDS": {"email": "email", "last_name": "family_name", "first_name": "given_name"},
+    "IS_MANAGER_FIELD": "is_manager",
+    "ACCOUNT_CLASS": "allauth.socialaccount.providers.google.provider.GoogleAccount",
+    "ACCESS_TOKEN_URL": "https://oauth2.googleapis.com/token",
+    "AUTHORIZE_URL": "https://accounts.google.com/o/oauth2/v2/auth",
+    "ID_TOKEN_ISSUER": "https://accounts.google.com",
+    "OAUTH_PKCE_ENABLED": True,
+}
+
+SOCIALACCOUNT_PROVIDERS_DEFS = {"azure": _AZURE_SOCIALACCOUNT_PROVIDER, "google": _GOOGLE_SOCIALACCOUNT_PROVIDER}
+
+_SOCIALACCOUNT_PROVIDER = os.environ.get("SOCIALACCOUNT_PROVIDER", "google")
 
 # [chumano] trisid
-SOCIALACCOUNT_EXTERNAL_OIDC_ENABLED = ast.literal_eval(os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_ENABLED", "False"))
-if SOCIALACCOUNT_EXTERNAL_OIDC_ENABLED:
+if SOCIALACCOUNT_OIDC_PROVIDER_ENABLED and (_SOCIALACCOUNT_PROVIDER=='trisid'):
+    # INSTALLED_APPS += (
+    #     'allauth.socialaccount.providers.openid_connect',
+    # )
+
     SOCIALACCOUNT_EXTERNAL_OIDC_NAME = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_NAME", "TRISID")
-    SOCIALACCOUNT_EXTERNAL_OIDC_URL = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_URL", "")
+    SOCIALACCOUNT_EXTERNAL_OIDC_URL = "https://id2.tris.vn"# os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_URL", "")
     SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID", "maphub")
     SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET = os.environ.get("SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET", "")
-    SOCIALACCOUNT_PROVIDERS["openid_connect"] = {
-        "SERVERS": [
-            {
-                "id": "trisid",  # 30 characters or less
-                "name": SOCIALACCOUNT_EXTERNAL_OIDC_NAME,
-                "server_url": SOCIALACCOUNT_EXTERNAL_OIDC_URL,
+    # SOCIALACCOUNT_PROVIDERS["openid_connect"] = {
+    #     "SERVERS": [
+    #         {
+    #             "id": "trisid",  # 30 characters or less
+    #             "name": SOCIALACCOUNT_EXTERNAL_OIDC_NAME,
+    #             "server_url": SOCIALACCOUNT_EXTERNAL_OIDC_URL,
                 
-                "APP": {
-                    "client_id": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID,
-                    "secret": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET,
-                },
-            },
-        ]
+    #             "APP": {
+    #                 "client_id": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTID,
+    #                 "secret": SOCIALACCOUNT_EXTERNAL_OIDC_CLIENTSECRET,
+    #             },
+    #         },
+    #     ]
+    # }
+    # View /.well-known/openid-configuration to get urls
+    _TRISID_SOCIALACCOUNT_PROVIDER = {
+        "NAME":SOCIALACCOUNT_EXTERNAL_OIDC_NAME,
+        "SCOPE": [
+            "profile",
+            "email",
+            "openid"
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+            "prompt": "select_account consent",
+        },
+        "COMMON_FIELDS": {"email": "email", "last_name": "family_name", "first_name": "given_name"},
+        "IS_MANAGER_FIELD": "is_manager",
+        "ACCOUNT_CLASS": "geonode.people.socialaccount.providers.geonode_openid_connect.provider.GenericOpenIDConnectProviderAccount",
+        "ACCESS_TOKEN_URL": SOCIALACCOUNT_EXTERNAL_OIDC_URL+"/connect/token",
+        "AUTHORIZE_URL": SOCIALACCOUNT_EXTERNAL_OIDC_URL+"/connect/authorize",
+        "ID_TOKEN_ISSUER": SOCIALACCOUNT_EXTERNAL_OIDC_URL,
+        "OAUTH_PKCE_ENABLED": True,
     }
 
-SOCIALACCOUNT_PROFILE_EXTRACTORS = {
-    "facebook": "geonode.people.profileextractors.FacebookExtractor",
-    "linkedin_oauth2": "geonode.people.profileextractors.LinkedInExtractor",
+    SOCIALACCOUNT_PROVIDERS_DEFS['trisid'] = _TRISID_SOCIALACCOUNT_PROVIDER
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    SOCIALACCOUNT_OIDC_PROVIDER: SOCIALACCOUNT_PROVIDERS_DEFS.get(_SOCIALACCOUNT_PROVIDER),
 }
+
+_SOCIALACCOUNT_PROFILE_EXTRACTOR = os.environ.get(
+    "SOCIALACCOUNT_PROFILE_EXTRACTOR", "geonode.people.profileextractors.OpenIDExtractor"
+)
+
+SOCIALACCOUNT_PROFILE_EXTRACTORS = {
+    SOCIALACCOUNT_OIDC_PROVIDER: _SOCIALACCOUNT_PROFILE_EXTRACTOR,
+}
+
 
 INVITATIONS_ADAPTER = ACCOUNT_ADAPTER
 INVITATIONS_CONFIRMATION_URL_NAME = "geonode.invitations:accept-invite"
@@ -2071,20 +2120,21 @@ THUMBNAIL_SIZE = {
 THUMBNAIL_BACKGROUND = {
     # class generating thumbnail's background
     # 'class': 'geonode.thumbs.background.WikiMediaTileBackground',
-    "class": "geonode.thumbs.background.OSMTileBackground",
-    # 'class': 'geonode.thumbs.background.GenericXYZBackground',
-    # initialization parameters for generator instance, valid only for generic classes
-    "options": {
-        # 'url': URL for the generic xyz / tms service
-        # 'tms': False by default. Set to True if the service is TMS
-        # 'tile_size': tile size for the generic xyz service, default is 256
-    },
-    # example options for a TMS service
-    # 'class': 'geonode.thumbs.background.GenericXYZBackground',
-    # 'options': {
-    #    'url': 'http://maps.geosolutionsgroup.com/geoserver/gwc/service/tms/1.0.0/osm%3Aosm_simple_light@EPSG%3A900913@png/{z}/{x}/{y}.png',
-    #    'tms': True
+    # "class": "geonode.thumbs.background.OSMTileBackground",
+    # # initialization parameters for generator instance, valid only for generic classes
+    # "options": {
+    #     # 'url': URL for the generic xyz / tms service
+    #     # 'tms': False by default. Set to True if the service is TMS
+    #     # 'tile_size': tile size for the generic xyz service, default is 256
     # },
+    
+    # example options for a TMS service
+    'class': 'geonode.thumbs.background.GenericXYZBackground',
+    'options': {
+       'url': 'http://rtile.map4d.vn/all/2d/{z}/{x}/{y}.png',
+       'tms': False,
+       'tile_size': 256
+    },
 }
 
 # define the urls after the settings are overridden
@@ -2166,7 +2216,7 @@ USER_ANALYTICS_GZIP = ast.literal_eval(os.getenv("USER_ANALYTICS_GZIP", "False")
 
 GEOIP_PATH = os.getenv("GEOIP_PATH", os.path.join(PROJECT_ROOT, "GeoIPCities.dat"))
 # This controls if tastypie search on resourches is performed only with titles
-SEARCH_RESOURCES_EXTENDED = strtobool(os.getenv("SEARCH_RESOURCES_EXTENDED", "True"))
+SEARCH_RESOURCES_EXTENDED = ast.literal_eval(os.getenv("SEARCH_RESOURCES_EXTENDED", "True"))
 # -- END Settings for MONITORING plugin
 
 CATALOG_METADATA_TEMPLATE = os.getenv("CATALOG_METADATA_TEMPLATE", "catalogue/full_metadata.xml")
@@ -2365,14 +2415,17 @@ IMPORTER_HANDLERS = ast.literal_eval(
     )
 )
 
+DATAHUB_URL = os.getenv("DATAHUB_URL", None)
+
 INSTALLED_APPS += ("geonode.facets",)
 GEONODE_APPS += ("geonode.facets",)
 
-FACET_PROVIDERS = (
-    "geonode.facets.providers.category.CategoryFacetProvider",
-    "geonode.facets.providers.users.OwnerFacetProvider",
-    "geonode.facets.providers.thesaurus.ThesaurusFacetProvider",
-    "geonode.facets.providers.region.RegionFacetProvider",
-)
-
-DATAHUB_URL = os.getenv("DATAHUB_URL", None)
+FACET_PROVIDERS = [
+    {"class": "geonode.facets.providers.baseinfo.ResourceTypeFacetProvider"},
+    {"class": "geonode.facets.providers.baseinfo.FeaturedFacetProvider"},
+    {"class": "geonode.facets.providers.category.CategoryFacetProvider", "config": {"order": 5, "type": "select"}},
+    {"class": "geonode.facets.providers.keyword.KeywordFacetProvider", "config": {"order": 6, "type": "select"}},
+    {"class": "geonode.facets.providers.region.RegionFacetProvider", "config": {"order": 7, "type": "select"}},
+    {"class": "geonode.facets.providers.users.OwnerFacetProvider", "config": {"order": 8, "type": "select"}},
+    {"class": "geonode.facets.providers.thesaurus.ThesaurusFacetProvider", "config": {"type": "select"}},
+]

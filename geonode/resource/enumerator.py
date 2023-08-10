@@ -17,8 +17,12 @@
 #
 #########################################################################
 import enum
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy
 
+#chumano
+def _(val):
+    # return gettext_lazy(val)
+    return val
 
 class ExecutionRequestAction(enum.Enum):
     IMPORT = _("import")
