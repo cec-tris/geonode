@@ -6016,16 +6016,16 @@ msgid "Projection System"
 msgstr "Projection System"
 
 msgid "Extension x0"
-msgstr "Extension x0"
+msgstr "Tây"
 
 msgid "Extension x1"
-msgstr "Extension x1"
+msgstr "Đông"
 
 msgid "Extension y0"
-msgstr "Extension y0"
+msgstr "Nam"
 
 msgid "Extension y1"
-msgstr "Extension y1"
+msgstr "Bắc"
 
 msgid "Features"
 msgstr "Features"

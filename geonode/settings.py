@@ -654,7 +654,7 @@ except ValueError:
             "glb",
             "pcd",
             "gltf",
-            "ifc"
+            "ifc",
         ]
         if os.getenv("ALLOWED_DOCUMENT_TYPES") is None
         else re.split(r" *[,|:;] *", os.getenv("ALLOWED_DOCUMENT_TYPES"))
@@ -2416,6 +2416,8 @@ IMPORTER_HANDLERS = ast.literal_eval(
 )
 
 DATAHUB_URL = os.getenv("DATAHUB_URL", None)
+DATAHUB_ENABLED  = os.getenv("DATAHUB_ENABLED", True)
+DATAHUB_ID_FIELD = os.getenv("DATAHUB_ID_FIELD", "datahubid")
 
 INSTALLED_APPS += ("geonode.facets",)
 GEONODE_APPS += ("geonode.facets",)
@@ -2429,3 +2431,17 @@ FACET_PROVIDERS = [
     {"class": "geonode.facets.providers.users.OwnerFacetProvider", "config": {"order": 8, "type": "select"}},
     {"class": "geonode.facets.providers.thesaurus.ThesaurusFacetProvider", "config": {"type": "select"}},
 ]
+
+DATASET_DOWNLOAD_HANDLER = os.getenv("DATASET_DOWNLOAD_HANDLER", "geonode.resource.download_handler.DownloadHandler")
+
+GOOGLE_BASEMAPE = {
+    "type": "tileprovider",
+    "title": "Google Maps",
+    "name": "Google",
+    "provider": "custom",
+    "url": "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+    "thumbURL": "https://mt1.google.com/vt/lyrs=y&x=25&y=14&z=5",
+    "group": "background",
+    "visibility": False,
+}
+DEFAULT_MS2_BACKGROUNDS = DEFAULT_MS2_BACKGROUNDS + [GOOGLE_BASEMAPE]
