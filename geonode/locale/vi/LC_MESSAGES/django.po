@@ -3000,16 +3000,16 @@ msgid "Identification Image"
 msgstr "Hình nhận dạng"
 
 msgid "Extension x0"
-msgstr "Phạm vi x0"
+msgstr "Tây"
 
 msgid "Extension x1"
-msgstr "Phạm vi x1"
+msgstr "Đông"
 
 msgid "Extension y0"
-msgstr "Phạm vi y0"
+msgstr "Nam"
 
 msgid "Extension y1"
-msgstr "Phạm vi ý"
+msgstr "Bắc"
 
 msgid "Features"
 msgstr "Tính năng"

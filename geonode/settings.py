@@ -2449,3 +2449,15 @@ FACET_PROVIDERS = [
 ]
 
 DATASET_DOWNLOAD_HANDLER = os.getenv("DATASET_DOWNLOAD_HANDLER", "geonode.resource.download_handler.DownloadHandler")
+
+GOOGLE_BASEMAPE = {
+    "type": "tileprovider",
+    "title": "Google Maps",
+    "name": "Google",
+    "provider": "custom",
+    "url": "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+    "thumbURL": "https://mt1.google.com/vt/lyrs=y&x=25&y=14&z=5",
+    "group": "background",
+    "visibility": False,
+}
+DEFAULT_MS2_BACKGROUNDS = DEFAULT_MS2_BACKGROUNDS + [GOOGLE_BASEMAPE]
