@@ -89,8 +89,8 @@ pinax-ratings==4.0.0
 
 # GeoNode org maintained apps.
 # django-geonode-mapstore-client==4.0.5
--e git+https://github.com/cec-tris/geonode-mapstore-client.git@master#egg=django_geonode_mapstore_client
--e git+https://github.com/cec-tris/geonode-importer.git@master#egg=geonode-importer
+-e git+https://github.com/cec-tris/geonode-mapstore-client.git@v4.1.2#egg=django_geonode_mapstore_client
+-e git+https://github.com/cec-tris/geonode-importer.git@v4.1.2#egg=geonode-importer
 django-avatar==7.1.1
 geonode-oauth-toolkit==2.2.2
 geonode-user-messages==2.0.2
