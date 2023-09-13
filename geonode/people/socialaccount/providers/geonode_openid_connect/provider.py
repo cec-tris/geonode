@@ -24,8 +24,7 @@ django-allauth.
 
 """
 from django.conf import settings
-
-from geonode.utils import import_class_module
+from django.utils.module_loading import import_string
 
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.providers.base import AuthAction, ProviderAccount
@@ -43,7 +42,7 @@ class GenericOpenIDConnectProviderAccount(ProviderAccount):
 class GenericOpenIDConnectProvider(OAuth2Provider):
     id = "geonode_openid_connect"
     name = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("NAME", "GeoNode OpenIDConnect")
-    account_class = import_class_module(
+    account_class = import_string(
         getattr(settings, "SOCIALACCOUNT_PROVIDERS", {})
         .get(PROVIDER_ID, {})
         .get(
@@ -68,7 +67,11 @@ class GenericOpenIDConnectProvider(OAuth2Provider):
         return ret
 
     def extract_uid(self, data):
-        return data.get("sub", data.get("id"))
+        _uid_field = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("UID_FIELD", None)
+        if _uid_field:
+            return data.get(_uid_field)
+        else:
+            return data.get("uid", data.get("sub", data.get("id")))
 
     def extract_common_fields(self, data):
         _common_fields = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get(PROVIDER_ID, {}).get("COMMON_FIELDS", {})
