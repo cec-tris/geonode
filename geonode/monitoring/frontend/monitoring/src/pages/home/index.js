@@ -20,8 +20,8 @@
 */
 
 import React from 'react';
-import HoverPaper from '../../components/atoms/hover-paper';
-import Map from '../../components/atoms/map';
+// import HoverPaper from '../../components/atoms/hover-paper';
+// import Map from '../../components/atoms/map';
 import Header from '../../components/organisms/header';
 import Stats from '../../components/organisms/stats';
 import SoftwarePerformance from '../../components/organisms/software-performance';
@@ -39,9 +39,9 @@ class Home extends React.Component {
           <SoftwarePerformance />
           <div style={styles.hardware}>
             <HardwarePerformance />
-            <HoverPaper>
+            {/* <HoverPaper>
               <Map />
-            </HoverPaper>
+            </HoverPaper> */}
           </div>
         </div>
       </div>

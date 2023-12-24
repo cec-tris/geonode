@@ -37,10 +37,10 @@ class SWPerf extends React.Component {
           <GeonodeAnalytics />
           <WSAnalytics />
         </div>
-        <div style={styles.analytics}>
+        {/* <div style={styles.analytics}>
           <GeonodeLayersAnalytics />
           <WSLayersAnalytics />
-        </div>
+        </div> */}
       </div>
     );
   }

@@ -57,28 +57,28 @@ export const pages = [
         paths: ["/"],
         component: wrapComponent(Home)
     },
-    {
-        group: 'monitoring',
-        exact: true,
-        label: 'errors',
-        Icon: ErrorIcon,
-        paths: ["/errors"],
-        component: wrapComponent(Errors)
-    },
-    {
-        group: 'monitoring',
-        exact: true,
-        paths: ["/errors/:errorId"],
-        component: wrapComponent(ErrorDetails)
-    },
-    {
-        group: 'monitoring',
-        exact: true,
-        label: 'alerts',
-        Icon: NotificationsIcon,
-        paths: ["/alerts"],
-        component: wrapComponent(Alerts)
-    },
+    // {
+    //     group: 'monitoring',
+    //     exact: true,
+    //     label: 'errors',
+    //     Icon: ErrorIcon,
+    //     paths: ["/errors"],
+    //     component: wrapComponent(Errors)
+    // },
+    // {
+    //     group: 'monitoring',
+    //     exact: true,
+    //     paths: ["/errors/:errorId"],
+    //     component: wrapComponent(ErrorDetails)
+    // },
+    // {
+    //     group: 'monitoring',
+    //     exact: true,
+    //     label: 'alerts',
+    //     Icon: NotificationsIcon,
+    //     paths: ["/alerts"],
+    //     component: wrapComponent(Alerts)
+    // },
     {
         group: 'monitoring',
         exact: true,
@@ -86,12 +86,12 @@ export const pages = [
         paths: ["/alerts-settings"],
         component: wrapComponent(AlertsSettings)
     },
-    {
-        group: 'monitoring',
-        exact: true,
-        paths: ["/alerts/:alertId"],
-        component: wrapComponent(AlertConfig)
-    },
+    // {
+    //     group: 'monitoring',
+    //     exact: true,
+    //     paths: ["/alerts/:alertId"],
+    //     component: wrapComponent(AlertConfig)
+    // },
     {
         group: 'monitoring',
         exact: true,

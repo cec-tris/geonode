@@ -45,11 +45,11 @@ class HWPerf extends React.Component {
         <Header back="/" />
         <div style={styles.analytics}>
           <GeonodeStatus />
-          {
+          {/* {
             this.props.services
             ? <GeoserverStatus />
             : false
-          }
+          } */}
         </div>
       </div>
     );

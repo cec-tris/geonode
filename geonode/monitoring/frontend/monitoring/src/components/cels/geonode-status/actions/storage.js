@@ -20,25 +20,25 @@
 */
 
 import { createAction } from 'redux-actions';
-import { fetch } from '../../../utils';
-import apiUrl from '../../../backend';
-import FREQUENT_LAYERS from './constants';
+import { fetch } from '../../../../utils';
+import apiUrl from '../../../../backend';
+import { GEONODE_STORAGE_STATUS } from '../constants';
 
 
 const reset = createAction(
-  FREQUENT_LAYERS,
+  GEONODE_STORAGE_STATUS,
   () => ({ status: 'initial' })
 );
 
 
 export const begin = createAction(
-  FREQUENT_LAYERS,
+  GEONODE_STORAGE_STATUS,
   () => ({ status: 'pending' })
 );
 
 
 const success = createAction(
-  FREQUENT_LAYERS,
+  GEONODE_STORAGE_STATUS,
   response => ({
     response,
     status: 'success',
@@ -47,7 +47,7 @@ const success = createAction(
 
 
 const fail = createAction(
-  FREQUENT_LAYERS,
+  GEONODE_STORAGE_STATUS,
   error => ({
     status: 'error',
     error,
@@ -55,11 +55,11 @@ const fail = createAction(
 );
 
 
-const get = (interval) =>
+const get = (host, interval) =>
   (dispatch) => {
     dispatch(begin());
-    let url = `${apiUrl}/metric_data/request.count/?group_by=resource`;
-    url += `&resource_type=dataset&last=${interval}&interval=${interval}`;
+    let url = `${apiUrl}/metric_data/storage.used/?service=${host}`;
+    url += `&last=${interval}&interval=${interval}`;
     fetch({ url })
       .then(response => {
         dispatch(success(response));

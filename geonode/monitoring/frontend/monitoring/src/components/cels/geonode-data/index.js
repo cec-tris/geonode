@@ -81,7 +81,7 @@ class GeonodeData extends React.Component {
     ] = getResponseData(this.props.response);
     return (
       <div style={styles.content}>
-        <h5>Geonode Data Overview</h5>
+        {/* <h5>MapHub Overview</h5> */}
         <div style={styles.geonode}>
           <AverageResponseTime time={averageResponseTime} />
           <MaxResponseTime time={maxResponseTime} />

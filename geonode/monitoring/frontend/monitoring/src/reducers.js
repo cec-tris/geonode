@@ -35,7 +35,7 @@ import geonodeAverageResponse from './components/cels/geonode-data/reducers';
 import layerList from './components/cels/layer-select/reducers';
 import uptime from './components/cels/uptime/reducers';
 import wsServiceData from './components/cels/ws-data/reducers';
-import { geonodeCpuStatus, geonodeMemStatus } from './components/cels/geonode-status/reducers';
+import { geonodeCpuStatus, geonodeMemStatus, geonodeStorageStatus } from './components/cels/geonode-status/reducers';
 import { geoserverCpuStatus } from './components/cels/geoserver-status/reducers';
 import { geoserverMemStatus } from './components/cels/geoserver-status/reducers';
 
@@ -75,6 +75,7 @@ export const reducers = {
   geonodeAverageResponse,
   geonodeCpuSequence,
   geonodeCpuStatus,
+  geonodeStorageStatus,
   geonodeErrorSequence,
   geonodeLayerError,
   geonodeLayerResponse,

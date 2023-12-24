@@ -921,7 +921,7 @@ class MonitoringAnalyticsTestCase(MonitoringTestBase):
         # layer/view
         url = (
             f"{reverse('monitoring:api_metric_data', args={'request.users'})}?"
-            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=view'}&{'resource_type=layer'}"
+            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=view'}&{'resource_type=dataset'}"
         )
         # Unauthorized
         response = self.client.get(url)
@@ -984,7 +984,7 @@ class MonitoringAnalyticsTestCase(MonitoringTestBase):
         # layer/upload
         url = (
             f"{reverse('monitoring:api_metric_data', args={'request.users'})}?"
-            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=upload'}&{'resource_type=layer'}"
+            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=upload'}&{'resource_type=dataset'}"
         )
         # Unauthorized
         response = self.client.get(url)
@@ -1047,7 +1047,7 @@ class MonitoringAnalyticsTestCase(MonitoringTestBase):
         # layer/view_metadata
         url = (
             f"{reverse('monitoring:api_metric_data', args={'request.users'})}?"
-            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=view_metadata'}&{'resource_type=layer'}"
+            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=view_metadata'}&{'resource_type=dataset'}"
         )
         # Unauthorized
         response = self.client.get(url)
@@ -1100,7 +1100,7 @@ class MonitoringAnalyticsTestCase(MonitoringTestBase):
         # layer/change_metadata
         url = (
             f"{reverse('monitoring:api_metric_data', args={'request.users'})}?"
-            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=change_metadata'}&{'resource_type=layer'}"
+            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=change_metadata'}&{'resource_type=dataset'}"
         )
         # Unauthorized
         response = self.client.get(url)
@@ -1153,7 +1153,7 @@ class MonitoringAnalyticsTestCase(MonitoringTestBase):
         # layer/download
         url = (
             f"{reverse('monitoring:api_metric_data', args={'request.users'})}?"
-            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=download'}&{'resource_type=layer'}"
+            f"{'valid_from=2018-09-11T20:00:00.000Z&valid_to=2019-09-11T20:00:00.000Z&interval=2628000'}&{'event_type=download'}&{'resource_type=dataset'}"
         )
         # Unauthorized
         response = self.client.get(url)

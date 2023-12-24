@@ -115,7 +115,7 @@ class GeonodeAnalytics extends React.Component {
     errorRateData = getCount(this.props.errors);
     return (
       <HoverPaper style={styles.content}>
-        <h3>Geonode Analytics</h3>
+        <h3>MapHub Analytics</h3>
         <ResponseTime
           average={averageResponseTime}
           max={maxResponseTime}
@@ -123,8 +123,8 @@ class GeonodeAnalytics extends React.Component {
         />
         <HR />
         <Throughput data={throughputData} />
-        <HR />
-        <ErrorsRate data={errorRateData} />
+        {/* <HR />
+        <ErrorsRate data={errorRateData} /> */}
       </HoverPaper>
     );
   }

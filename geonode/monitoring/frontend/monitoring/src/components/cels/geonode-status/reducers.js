@@ -19,7 +19,7 @@
 #########################################################################
 */
 
-import { GEONODE_CPU_STATUS, GEONODE_MEM_STATUS } from './constants';
+import { GEONODE_CPU_STATUS, GEONODE_MEM_STATUS, GEONODE_STORAGE_STATUS } from './constants';
 
 export function geonodeCpuStatus(
   state = { status: 'initial' },
@@ -40,6 +40,18 @@ export function geonodeMemStatus(
 ) {
   switch (action.type) {
     case GEONODE_MEM_STATUS:
+      return action.payload;
+    default:
+      return state;
+  }
+}
+
+export function geonodeStorageStatus(
+  state = { status: 'initial' },
+  action,
+) {
+  switch (action.type) {
+    case GEONODE_STORAGE_STATUS:
       return action.payload;
     default:
       return state;

@@ -26,12 +26,14 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import AverageCPU from '../../molecules/average-cpu';
 import AverageMemory from '../../molecules/average-memory';
+import StorageUsage from '../../molecules/storage';
 import styles from './styles';
 import actions from './actions';
 
 
 const mapStateToProps = (state) => ({
   cpu: state.geonodeCpuStatus.response,
+  storage: state.geonodeStorageStatus.response,
   interval: state.interval.interval,
   mem: state.geonodeMemStatus.response,
   services: state.services.hostgeonode,
@@ -43,11 +45,14 @@ const mapStateToProps = (state) => ({
 class GeonodeStatus extends React.Component {
   static propTypes = {
     cpu: PropTypes.object,
+    storage: PropTypes.object,
     getCpu: PropTypes.func.isRequired,
+    getStorage: PropTypes.func.isRequired,
     getMem: PropTypes.func.isRequired,
     interval: PropTypes.number,
     mem: PropTypes.object,
     resetCpu: PropTypes.func.isRequired,
+    resetStorage: PropTypes.func.isRequired,
     resetMem: PropTypes.func.isRequired,
     services: PropTypes.array,
     timestamp: PropTypes.instanceOf(Date),
@@ -66,6 +71,7 @@ class GeonodeStatus extends React.Component {
     ) => {
       this.props.getCpu(host, interval);
       this.props.getMem(host, interval);
+      this.props.getStorage(host, interval);
     };
 
     this.handleChange = (event, target, host) => {
@@ -93,6 +99,7 @@ class GeonodeStatus extends React.Component {
   componentWillUnmount() {
     this.props.resetCpu();
     this.props.resetMem();
+    this.props.resetStorage();
   }
 
   render() {
@@ -128,6 +135,20 @@ class GeonodeStatus extends React.Component {
         }
       }
     }
+
+    let storage = 0;
+    if (this.props.storage) {
+      storage = undefined;
+      const data = this.props.storage.data.data;
+      if (data.length > 0) {
+        if (data[0].data.length > 0) {
+          const metric = data[0].data[0];
+          const value = Number(metric.val);
+          storage = Math.round(value)
+        }
+      }
+    }
+
     const hosts = this.props.services
                 ? this.props.services.map((host) =>
                   <MenuItem
@@ -146,10 +167,11 @@ class GeonodeStatus extends React.Component {
         >
           {hosts}
         </SelectField>
-        <h5>GeoNode HW Status</h5>
+        <h5>Hardware Status</h5>
         <div style={styles.geonode}>
           <AverageCPU cpu={cpu} />
           <AverageMemory mem={mem} />
+          <StorageUsage storage={storage} />
         </div>
       </div>
     );

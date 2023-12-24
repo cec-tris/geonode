@@ -49,7 +49,7 @@ class HardwarePerformance extends React.Component {
           />
         </div>
         <GeonodeStatus />
-        <GeoserverStatus />
+        {/* <GeoserverStatus /> */}
       </HoverPaper>
     );
   }

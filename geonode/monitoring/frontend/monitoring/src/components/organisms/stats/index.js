@@ -32,13 +32,13 @@ class Stats extends React.Component {
     return (
       <div style={styles.content}>
         <div style={styles.first}>
-          <HealthCheck />
+          {/* <HealthCheck /> */}
           <Uptime />
         </div>
-        <div style={styles.second}>
+        {/* <div style={styles.second}>
           <Alerts />
           <Errors />
-        </div>
+        </div> */}
       </div>
     );
   }

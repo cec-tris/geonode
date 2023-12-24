@@ -133,8 +133,8 @@ class WSAnalytics extends React.Component {
         />
         <HR />
         <Throughput data={throughputData} />
-        <HR />
-        <ErrorsRate data={errorRateData} />
+        {/* <HR />
+        <ErrorsRate data={errorRateData} /> */}
       </HoverPaper>
     );
   }

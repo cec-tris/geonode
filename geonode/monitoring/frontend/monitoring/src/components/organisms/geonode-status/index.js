@@ -142,7 +142,7 @@ class GeonodeStatus extends React.Component {
                 : undefined;
     return (
       <HoverPaper style={contentStyle}>
-        <h3>GeoNode status</h3>
+        <h3>Server status</h3>
         <SelectField
           floatingLabelText="Host"
           value={this.state.host}

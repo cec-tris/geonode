@@ -20,41 +20,51 @@
 */
 
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import ChartIcon from 'material-ui/svg-icons/av/equalizer';
+import PropTypes from 'prop-types';
+import CircularProgress from 'material-ui/CircularProgress';
 import HoverPaper from '../../atoms/hover-paper';
-import GeonodeData from '../../cels/geonode-data';
-import WSData from '../../cels/ws-data';
 import styles from './styles';
-import {withRouter} from 'react-router-dom';
 
-class SoftwarePerformance extends React.Component {
 
-  constructor(props) {
-    super(props);
+class StorageUsage extends React.Component {
+  static propTypes = {
+    storage: PropTypes.number,
+  }
 
-    this.handleClick = () => {
-      this.props.history.push('/performance/software');
-    };
+  static contextTypes = {
+    muiTheme: PropTypes.object.isRequired,
   }
 
   render() {
+    let storage = this.props.storage;
+    if (storage === undefined) {
+      storage = 'N/A';
+    } else if (typeof storage === 'number') {
+      if (storage < 0) {
+        storage = <CircularProgress size={this.context.muiTheme.spinner.size} />;
+      } else {
+        let mbMem = (storage / 1024 / 1024);
+        let mbMemFormated;
+        if (mbMem < 1024) {
+          mbMemFormated = mbMem.toFixed(0);
+          storage = `${mbMemFormated} MB`;
+        } else {
+          mbMem = mbMem /1024
+          mbMemFormated = Math.floor(mbMem);
+          storage = `${mbMemFormated} GB`;
+        }
+      }
+    }
     return (
       <HoverPaper style={styles.content}>
-        <div style={styles.header}>
-          <h3 style={styles.title}>Network Performance</h3>
-          <RaisedButton
-            onClick={this.handleClick}
-            style={styles.icon}
-            icon={<ChartIcon />}
-          />
+        <h5>Storage Usage</h5>
+        <div style={styles.stat}>
+          <h3>{storage}</h3>
         </div>
-        <GeonodeData />
-        <WSData />
       </HoverPaper>
     );
   }
 }
 
 
-export default withRouter(SoftwarePerformance);
+export default StorageUsage;

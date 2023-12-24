@@ -173,7 +173,7 @@ export default function AnalyticsDetails({ maxCount = 10, match, history }) {
                         date={date}
                         globalTimeRange
                         eventType="upload"
-                        resourceType="layer"
+                        resourceType="dataset"
                         label={<FormattedMessage id="layers" defaultMessage="Layers"/>}
                         requests={{
                             count: {
@@ -225,7 +225,7 @@ export default function AnalyticsDetails({ maxCount = 10, match, history }) {
                 <Grid item xs={12} md={3}>
                     <RequestCounter
                         label={<FormattedMessage id="layers" defaultMessage="Layers"/>}
-                        resourceType="layer"
+                        resourceType="dataset"
                         timeRange={timeRange}
                         date={date}
                         globalTimeRange
@@ -492,7 +492,7 @@ export default function AnalyticsDetails({ maxCount = 10, match, history }) {
                         }} />
                 </Grid>
                 <Grid item xs={12} md={12} lg={6}>
-                    <RequestTable
+                    {/* <RequestTable
                         globalTimeRange
                         date={date}
                         timeRange={timeRange}
@@ -507,7 +507,7 @@ export default function AnalyticsDetails({ maxCount = 10, match, history }) {
                                 label: <FormattedMessage id="hits" defaultMessage="Hits"/>,
                                 request: getCountriesCount
                             }
-                        }} />
+                        }} /> */}
                 </Grid>
                 <Grid item xs={12} md={12} lg={6}>
                     <RequestTable
@@ -543,10 +543,10 @@ export default function AnalyticsDetails({ maxCount = 10, match, history }) {
                             }
                         }} />
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Calendar
                         label={<FormattedMessage id="layersPublication" defaultMessage="Layers Publication"/>}
-                        resourceType="layer"
+                        resourceType="dataset"
                         eventType="upload"
                         globalTimeRange
                         date={date}
@@ -575,7 +575,7 @@ export default function AnalyticsDetails({ maxCount = 10, match, history }) {
                         timeRange={timeRange}
                         request={getEventsDates}
                         tooltip={({ count = 0 }) => `${count} ${count === 1 ? 'publication' : 'publications'}`} />
-                </Grid>
+                </Grid> */}
             </Grid>
         </Container>
     );

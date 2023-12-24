@@ -43,16 +43,17 @@ class AverageMemory extends React.Component {
       if (mem < 0) {
         mem = <CircularProgress size={this.context.muiTheme.spinner.size} />;
       } else {
-        const mbMem = (mem / 1024 / 1024);
+        let mbMem = (mem / 1024 / 1024);
         let mbMemFormated;
-        if (mbMem < 10) {
+        if (mbMem < 1024) {
           mbMemFormated = mbMem.toFixed(2);
-        } else if (mbMem < 100) {
-          mbMemFormated = mbMem.toFixed(1);
+          mem = `${mbMemFormated} MB`;
         } else {
+          mbMem = mbMem/1024
           mbMemFormated = Math.floor(mbMem);
+          mem = `${mbMemFormated} GB`;
         }
-        mem = `${mbMemFormated} MB`;
+        
       }
     }
     return (

@@ -164,7 +164,7 @@ export default function Analytics({ maxCount = 10, timeRange = 'year', history }
                 <Grid item xs={12} md={3}>
                     <RequestCounter
                         label={<FormattedMessage id="layers" defaultMessage="Layers"/>}
-                        resourceType="layer"
+                        resourceType="dataset"
                         globalTimeRange
                         requests={{
                             hits: {
@@ -286,7 +286,7 @@ export default function Analytics({ maxCount = 10, timeRange = 'year', history }
                         }} />
                 </Grid>
                 <Grid item xs={12} md={12} lg={6}>
-                    <RequestTable
+                    {/* <RequestTable
                         maxCount={maxCount}
                         header={({ items }) => items && items.length > 0 && <Map id="map-overview" data={items} />}
                         label={(count) => <FormattedMessage id="mostActiveCountries10" defaultMessage="{count} Most Active Countries" values={{ count }}/>}
@@ -295,7 +295,7 @@ export default function Analytics({ maxCount = 10, timeRange = 'year', history }
                                 label: <FormattedMessage id="hits" defaultMessage="Hits"/>,
                                 request: getCountriesCount
                             }
-                        }} />
+                        }} /> */}
                 </Grid>
                 <Grid item xs={12} md={12} lg={6}>
                     <RequestTable
@@ -324,7 +324,7 @@ export default function Analytics({ maxCount = 10, timeRange = 'year', history }
                         maxCount={maxCount}
                         showLink
                         label={(count) => <FormattedMessage id="mostFrequentlyAccessedLayers10" defaultMessage="{count} Most Frequently Accessed Layers" values={{ count }}/>}
-                        resourceType="layer"
+                        resourceType="dataset"
                         onSelect={(resource) => 
                             handleUpdate({
                                 resourceType: resource.type,
@@ -435,10 +435,10 @@ export default function Analytics({ maxCount = 10, timeRange = 'year', history }
                             }
                         }} />
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Calendar
                         label={<FormattedMessage id="layersPublication" defaultMessage="Layers Publication"/>}
-                        resourceType="layer"
+                        resourceType="dataset"
                         eventType="upload"
                         globalTimeRange
                         timeRange={timeRange}
@@ -464,7 +464,7 @@ export default function Analytics({ maxCount = 10, timeRange = 'year', history }
                         timeRange={timeRange}
                         request={getEventsDates}
                         tooltip={({ count = 0 }) => `${count} ${count === 1 ? 'publication' : 'publications'}`} />
-                </Grid>
+                </Grid> */}
             </Grid>
         </Container>
     );
