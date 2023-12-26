@@ -34,10 +34,14 @@ export default function useTranslation() {
         axios.get(`${__TRANSLATION_PATH__}index.json`)
             .then(function({ data }) {
                 const { supportedLocales = [] } = data || {};
-                const currentLocale = 'en';
+                const currentLocale = 'vi';
+                console.log({currentLocale, supportedLocales})
                 return supportedLocales.find(locale => currentLocale === locale) || 'en';
             })
-            .then((selectedLocale) => axios.get(`${__TRANSLATION_PATH__}${selectedLocale}.json`))
+            .then((selectedLocale) => {
+                console.log({selectedLocale})
+                return axios.get(`${__TRANSLATION_PATH__}${selectedLocale}.json`)
+            })
             .then(({ data }) => {
                 if (isMounted) {
                     setLoading(false);

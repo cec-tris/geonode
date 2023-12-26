@@ -36,26 +36,26 @@ export const pages = [
         Icon: BarChartIcon,
         component: AnalyticsOverview
     },
-    {
-        group: 'analytics',
-        exact: true,
-        label: 'details',
-        paths: [
-            '/analytics/details',
-            '/analytics/details/:resourceType',
-            '/analytics/details/:resourceType/:resourceId',
-            '/analytics/details/:resourceType/time-range/:timeRange',
-            '/analytics/details/:resourceType/time-range/:timeRange/:resourceId',
-            '/analytics/details/:resourceType/time-range/:timeRange/date/:date',
-            '/analytics/details/:resourceType/time-range/:timeRange/date/:date/:resourceId',
-            '/analytics/details/:resourceType/time-range/:timeRange/event/:eventType',
-            '/analytics/details/:resourceType/time-range/:timeRange/event/:eventType/:resourceId',
-            '/analytics/details/:resourceType/time-range/:timeRange/date/:date/event/:eventType',
-            '/analytics/details/:resourceType/time-range/:timeRange/date/:date/event/:eventType/:resourceId'
-        ],
-        Icon: InfoOutlinedIcon,
-        component: AnalyticsDetails
-    }
+    // {
+    //     group: 'analytics',
+    //     exact: true,
+    //     label: 'details',
+    //     paths: [
+    //         '/analytics/details',
+    //         '/analytics/details/:resourceType',
+    //         '/analytics/details/:resourceType/:resourceId',
+    //         '/analytics/details/:resourceType/time-range/:timeRange',
+    //         '/analytics/details/:resourceType/time-range/:timeRange/:resourceId',
+    //         '/analytics/details/:resourceType/time-range/:timeRange/date/:date',
+    //         '/analytics/details/:resourceType/time-range/:timeRange/date/:date/:resourceId',
+    //         '/analytics/details/:resourceType/time-range/:timeRange/event/:eventType',
+    //         '/analytics/details/:resourceType/time-range/:timeRange/event/:eventType/:resourceId',
+    //         '/analytics/details/:resourceType/time-range/:timeRange/date/:date/event/:eventType',
+    //         '/analytics/details/:resourceType/time-range/:timeRange/date/:date/event/:eventType/:resourceId'
+    //     ],
+    //     Icon: InfoOutlinedIcon,
+    //     component: AnalyticsDetails
+    // }
 ];
 
 const routes = pages

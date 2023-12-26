@@ -41,7 +41,7 @@ class HardwarePerformance extends React.Component {
     return (
       <HoverPaper style={styles.content}>
         <div style={styles.header}>
-          <h3 style={styles.title}>Hardware Performance</h3>
+          <h3 style={styles.title}>Hardware</h3>
           <RaisedButton
             onClick={this.handleClick}
             style={styles.icon}

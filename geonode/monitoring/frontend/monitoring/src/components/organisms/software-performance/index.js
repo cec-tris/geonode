@@ -42,14 +42,14 @@ class SoftwarePerformance extends React.Component {
     return (
       <HoverPaper style={styles.content}>
         <div style={styles.header}>
-          <h3 style={styles.title}>Network Performance</h3>
+          <h3 style={styles.title}>Network</h3>
           <RaisedButton
             onClick={this.handleClick}
             style={styles.icon}
             icon={<ChartIcon />}
           />
         </div>
-        <GeonodeData />
+        {/* <GeonodeData /> */}
         <WSData />
       </HoverPaper>
     );
