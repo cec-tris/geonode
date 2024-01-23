@@ -2418,6 +2418,7 @@ IMPORTER_HANDLERS = ast.literal_eval(
 DATAHUB_ENABLED  = os.getenv("DATAHUB_ENABLED", False)
 DATAHUB_URL = os.getenv("DATAHUB_URL", None)
 DATAHUB_ID_FIELD = os.getenv("DATAHUB_ID_FIELD", "datahubid")
+DATAHUB_TEST_DEFAULT_ID = os.getenv("DATAHUB_TEST_DEFAULT_ID", None)
 
 INSTALLED_APPS += ("geonode.facets",)
 GEONODE_APPS += ("geonode.facets",)
