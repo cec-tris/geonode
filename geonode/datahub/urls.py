@@ -3,5 +3,5 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r"data/(?P<dataid>\w+)$", views.getdata, name="getdata"),
+    url(r"data/(?P<dataid>[\w.@+-]+)$", views.getdata, name="getdata"),
 ]

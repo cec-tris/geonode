@@ -8,7 +8,101 @@ import json
 
 TIMEOUT = 30
 
-__datahub_url = settings.DATAHUB_URL if settings.DATAHUB_URL else 'https://dev.opendata.tris.vn/'
+__datahub_url = settings.DATAHUB_URL
+
+
+def getdata(request, dataid, status=status):
+    if (not request.user or not request.user.is_authenticated):
+        return HttpResponse("User is not authenticated",status=status.HTTP_403_FORBIDDEN)
+    
+    if (not settings.DATAHUB_URL):
+        return HttpResponse("DATAHUB_URL is empty",status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #img url : https://dev.opendata.tris.vn/api/preview/images/
+    #access_token = __get_datahub_accesstoken()
+    headers = {
+        #"Authorization": f"Bearer {access_token}"
+    }
+
+    #[CHUNO] remove default dataid
+    dataid = settings.DATAHUB_TEST_DEFAULT_ID if settings.DATAHUB_TEST_DEFAULT_ID else dataid
+    url = f"{__datahub_url}api/gishub-mapping/get-object/{dataid}"
+    resp, content = http_client.request(
+        url, method='GET',
+        headers=headers, 
+        timeout=TIMEOUT,
+    )
+
+    status = int(resp.status_code)
+
+    data = None
+    if status == 200:
+        data = json.loads(content)
+    # else:
+    #     raise Exception(f"Could get data from {url}: {content}")
+    
+    return json_response({
+        'data': data,
+        'dataid': dataid,
+        #**realdata
+    })
+realdata = {
+    "link": "dev.opendata.tris.vn/public/mapping-gishub-object?id=0a259c26-4a84-4bc1-a6b3-fafc401bd4ce",
+    "fields": [{
+            "label": "12345678",
+            "type": "folder",
+            "value": {
+                "url": "dev.opendata.tris.vn/data-management?folder=35491f10-f194-4f15-9d1d-27b7356d70dd",
+                "name": "12345678"
+            }
+        }, {
+            "label": "list name1.txt",
+            "type": "file",
+            "value": {
+                "name": "list name1.txt",
+                "url": "dev.opendata.tris.vn/view-file?id=f78010b1-679d-4144-aa3c-bc3a771de476",
+                "thumbnailUrl": "d51a9b004d409bc7aa59888861cfa8c5-1024x1024.jpeg",
+                "mimetype": "text/plain"
+            }
+        }, {
+            "label": "screencapture-localhost-4200-dashboard-2023-11-30-16_27_02.png",
+            "type": "file",
+            "value": {
+                "name": "screencapture-localhost-4200-dashboard-2023-11-30-16_27_02.png",
+                "url": "dev.opendata.tris.vn/view-file?id=16158255-e243-4917-9de2-7c70c8ad0b76",
+                "thumbnailUrl": "5a42f60ceda046e84eeb9268c7859a57-1024x1024.jpeg",
+                "mimetype": "image/png"
+            }
+        }, {
+            "label": "file-sample_100kB (1).doc",
+            "type": "file",
+            "value": {
+                "name": "file-sample_100kB (1).doc",
+                "url": "dev.opendata.tris.vn/view-file?id=4c387e51-b4c4-4896-8f19-25210b773b8d",
+                "thumbnailUrl": "983883bc4412db24219bb8b5ddfb48fc-1024x1024.jpeg",
+                "mimetype": "application/msword"
+            }
+        }, {
+            "label": "MobiFone 2022.xlsx",
+            "type": "file",
+            "value": {
+                "name": "MobiFone 2022.xlsx",
+                "url": "dev.opendata.tris.vn/view-file?id=ab0fc0e5-6c87-43f2-ad8a-dc5d14edc533",
+                "thumbnailUrl": "af3a7992bf3783f84a2acc2ef1cb70ab-1024x1024.jpeg",
+                "mimetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+        }, {
+            "label": "New Text Document.txt",
+            "type": "file",
+            "value": {
+                "name": "New Text Document.txt",
+                "url": "dev.opendata.tris.vn/view-file?id=e4efa4be-9a03-4032-922d-8756ddc7e370",
+                "thumbnailUrl": "2535af95d81a9f066468541bfc2b4b27-1024x1024.jpeg",
+                "mimetype": "text/plain"
+            }
+        }
+    ]
+}
+
 __DATAHUB_PAT = '' #DATAHUB_PersonalAccessToken
 def __get_datahub_accesstoken():
     #TODO: USE __DATAHUB_PAT to GET access_token
@@ -26,88 +120,3 @@ def __get_datahub_accesstoken():
     )
 
     return access_token
-
-def getdata(request, dataid, status=status):
-    if (not request.user or not request.user.is_authenticated):
-        return HttpResponse("User is not authenticated",status=status.HTTP_403_FORBIDDEN)
-    
-    access_token = __get_datahub_accesstoken()
-    headers = {
-        "Authorization": f"Bearer {access_token}"
-    }
-
-    #TODO: update getDataHubPath
-    url = f"{__datahub_url}api/user/menus"
-    resp, content = http_client.request(
-        url, method='GET',
-        headers=headers, 
-        timeout=TIMEOUT,
-    )
-
-    status = int(resp.status_code)
-
-    data = None
-    if status == 200:
-        data = json.loads(content)
-    # else:
-    #     raise Exception(f"Could get data from {url}: {content}")
-    
-    return json_response({
-        'menus': data,
-        'dataid': dataid,
-        **fakedata
-    })
-
-fakedata = {
-            'schema': {},
-            'format': 'properties',  #template
-            'html':'<div></div>',
-            'fields': [
-                {
-                    'label': "Ngày ban hành",
-                    'type': "text" ,
-                    'value' : "20/12/1989"
-                },
-                {
-                    'label': "Hồ sơ",
-                    'type': "file" ,
-                    'value' : {
-                        'thumbnailUrl': "http://localhost/uploaded/thumbs/document-cd231abb-628c-45aa-96f0-f1220ebfde29-thumb-9593706f-6eab-4350-8fbf-949443b186c3.jpg",
-                        'url': "http://localhost/documents/40/embed"
-                    }
-                },
-                {
-                    'label': "Hình chụp",
-                    'type': "img" ,
-                    'value' : {
-                        'thumbnailUrl': "http://localhost/uploaded/thumbs/document-0a37db14-ce07-4e14-a1b7-88b4bd92dc6c-thumb-ed99b809-50ef-4cae-86b7-55f1757311bb.jpg",
-                        'url': "http://localhost/documents/4/embed"
-                    }
-                },
-                {
-                    'label': "Trạm BTS",
-                    'type': "link" ,
-                    'value' : "http://localhost/documents/4/embed"
-                },
-                {
-                    'label': "Mô tả",
-                    'type': "html" ,
-                    'value' : "<></>"
-                },
-                {
-                    'label': "BTS",
-                    'type': "relations",
-                    'value' : [
-                        {
-                            'fields': [
-                                {
-                                    'label': "Tram",
-                                    'type': "text" ,
-                                    'value' : "Tên"
-                                },
-                            ],
-                        }
-                    ]
-	            },
-            ]
-        }
