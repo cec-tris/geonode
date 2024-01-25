@@ -17,7 +17,6 @@ def getdata(request, dataid, status=status):
     
     if (not settings.DATAHUB_URL):
         return HttpResponse("DATAHUB_URL is empty",status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    #img url : https://dev.opendata.tris.vn/api/preview/images/
     #access_token = __get_datahub_accesstoken()
     headers = {
         #"Authorization": f"Bearer {access_token}"
@@ -35,13 +34,18 @@ def getdata(request, dataid, status=status):
     status = int(resp.status_code)
 
     data = None
+    errorCode = None
     if status == 200:
         data = json.loads(content)
-    # else:
-    #     raise Exception(f"Could get data from {url}: {content}")
+    elif status == 400:
+        err  = json.loads(resp.content)
+        errorCode = err['errorCode']
+    else:
+        raise Exception(f"Could get data from {url}: {resp.content}")
     
     return json_response({
         'data': data,
+        'errorCode': errorCode,
         'dataid': dataid,
         #**realdata
     })
