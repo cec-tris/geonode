@@ -38,6 +38,42 @@ from kombu.serialization import register
 
 from . import serializer
 
+from django.contrib import admin
+
+def get_app_list(self, request, app_label=None):
+        """
+        Return a sorted list of all the installed apps that have been
+        registered in this site.
+        """
+        app_dict = self._build_app_dict(request, app_label)
+        print("==========")
+        #print(app_dict)
+
+        # Sort the apps alphabetically.
+        app_list = sorted(app_dict.values(), key=lambda x: x["name"].lower())
+        #print(app_list)
+        
+        # Sort the models alphabetically within each app.
+        for app in app_list:
+            app["models"].sort(key=lambda x: x["name"])
+        #app_list = app_list[:2]
+        #allowed_group = ['Authentication and Authorization','Base','Icons','People','Groups','Actstream']
+        allowed_app = ['actstream','auth','base','icons','groups','people']
+        
+        allowed_object = ['Action','Group','Icon','Configuration','Groups','GroupCategory','GroupProfile','Profile']
+        app_list = [item for item in app_list if item['app_label'] in allowed_app]
+        for app in app_list:
+            app['models'] = [x for x in app['models'] if x['object_name'] in allowed_object]
+            for model in app['models']:
+                if model['object_name'] == 'Action':
+                    model['name'] = 'Thao tác hệ thống'
+            
+        #print(app_list)
+        return app_list
+
+admin.AdminSite.get_app_list = get_app_list
+
+
 SILENCED_SYSTEM_CHECKS = [
     "1_8.W001",
     "fields.W340",
