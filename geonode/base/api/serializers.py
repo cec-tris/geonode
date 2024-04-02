@@ -319,6 +319,7 @@ class UserSerializer(BaseDynamicModelSerializer):
         if not request or not request.user or not request.user.is_authenticated:
             if "perms" in data:
                 del data["perms"]
+            del data["email"] #chumano: dont show email if not logged in
         elif not request.user.is_superuser and not request.user.is_staff:
             if data["username"] != request.user.username:
                 if "perms" in data:
