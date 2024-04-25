@@ -73,7 +73,7 @@ services:
 
   # Nginx is serving django static and media files and proxies to django and geonode
   geonode:
-    image: maphub/nginx:4.1.0
+    image: harbor.tris.vn/maphub/nginx:4.1.2
     build: ./scripts/docker/nginx/
     container_name: nginx4${COMPOSE_PROJECT_NAME}
     environment:
@@ -109,7 +109,7 @@ services:
 
   # Geoserver backend
   geoserver:
-    image: geonode/geoserver:2.23.1
+    image: geonode/geoserver:2.23.0
     container_name: geoserver4${COMPOSE_PROJECT_NAME}
     healthcheck:
       test: "curl --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null http://127.0.0.1:8080/geoserver/ows -d service=WMS -d request=GetCapabilities"
